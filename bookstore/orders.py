@@ -3,7 +3,7 @@ import database
 import auth
 
 TAX = 0.15
-COUPONS_DISCOUNTS = {"ADMIN_DISCOUNT": 0.7, "STAFF_DISCOUNT": 0.7, "BLACKFRIDAY_DISCOUNT": 0.5, "WELCOME10_DISCOUNT": 0.9 }
+COUPONS_DISCOUNTS = {"ADMIN": 0.7, "STAFF": 0.7, "BLACKFRIDAY": 0.5, "WELCOME10": 0.9 }
 
 def process_order(token, items, coupon=None, shipping="standard", log=[]):
     username = auth.sessions.get(token)
