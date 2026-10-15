@@ -56,10 +56,14 @@ def update_stock(id, stock):
     conn = get_connection()
     try:
         cur = conn.cursor()
-        cur.execute(f"UPDATE books SET stock = {stock} WHERE id = {id}")
+        cur.execute("UPDATE books SET stock = %s WHERE id = %s", (stock, id))
         conn.commit()
+    except Exception as e:
+        print(f"Error to update the stock: {e}")
+        conn.rollback()
     finally:
-        return True
+        cur.close()
+        conn.close()
 
 
 def save_order(order_id, username, total, status):
