@@ -3,12 +3,7 @@ import database
 import auth
 
 TAX = 0.15
-COUPONS_DISCOUNTS = {
-"ADMIN_DISCOUNT": 0.7,
-"STAFF_DISCOUNT": 0.7,
-"BLACKFRIDAY_DISCOUNT": 0.5,
-"WELCOME10_DISCOUNT": 0.9
-}
+COUPONS_DISCOUNTS = {"ADMIN_DISCOUNT": 0.7, "STAFF_DISCOUNT": 0.7, "BLACKFRIDAY_DISCOUNT": 0.5, "WELCOME10_DISCOUNT": 0.9 }
 
 def process_order(token, items, coupon=None, shipping="standard", log=[]):
     username = auth.sessions.get(token)
@@ -51,39 +46,33 @@ def process_order(token, items, coupon=None, shipping="standard", log=[]):
         return None
 
 
-def print_invoice(username, items):
+def _generate_document_body(title, username, items):
+    """Función auxiliar que calcula los montos e imprime el cuerpo común."""
     print("==============================")
-    print("BOOKSTORE INVOICE")
-    print("Customer: " + username)
+    print(f"BOOKSTORE {title}")
+    print(f"Customer: {username}")
     print("==============================")
+    
     subtotal = 0
     for item in items:
         book = database.get_book(item["book_id"])
         line_total = book[2] * item["qty"]
-        subtotal = subtotal + line_total
-        print(book[1] + " x" + str(item["qty"]) + " = " + str(line_total))
+        subtotal += line_total
+        print(f"{book[1]} x{item['qty']} = {line_total}")
+        
     tax = subtotal * TAX
-    print("Subtotal: " + str(round(subtotal, 2)))
-    print("Tax: " + str(round(tax, 2)))
-    print("Total: " + str(round(subtotal + tax, 2)))
+    print(f"Subtotal: {round(subtotal, 2)}")
+    print(f"Tax: {round(tax, 2)}")
+    print(f"Total: {round(subtotal + tax, 2)}")
+
+
+def print_invoice(username, items):
+    _generate_document_body("INVOICE", username, items)
     print("==============================")
 
 
 def print_quote(username, items):
-    print("==============================")
-    print("BOOKSTORE QUOTE")
-    print("Customer: " + username)
-    print("==============================")
-    subtotal = 0
-    for item in items:
-        book = database.get_book(item["book_id"])
-        line_total = book[2] * item["qty"]
-        subtotal = subtotal + line_total
-        print(book[1] + " x" + str(item["qty"]) + " = " + str(line_total))
-    tax = subtotal * TAX
-    print("Subtotal: " + str(round(subtotal, 2)))
-    print("Tax: " + str(round(tax, 2)))
-    print("Total: " + str(round(subtotal + tax, 2)))
+    _generate_document_body("QUOTE", username, items)
     print("This quote is valid for 7 days.")
     print("==============================")
 
