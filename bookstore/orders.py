@@ -3,6 +3,10 @@ import database
 import auth
 
 TAX = 0.15
+ADMIN_DISCOUNT = 0.7
+STAFF_DISCOUNT = 0.7
+BLACKFRIDAY_DISCOUNT = 0.5
+WELCOME10_DISCOUNT = 0.9
 
 
 def process_order(token, items, coupon=None, shipping="standard", log=[]):
@@ -30,14 +34,15 @@ def process_order(token, items, coupon=None, shipping="standard", log=[]):
                 print("Book not found")
         if coupon:
             if coupon == "WELCOME10":
-                total = total * 0.9
+                total = total * WELCOME10_DISCOUNT
             elif coupon == "BLACKFRIDAY":
-                total = total * 0.5
+                total = total * BLACKFRIDAY_DISCOUNT
             elif coupon == "STAFF":
                 if auth.is_admin(token):
-                    total = total * 0.7
+                    total = total * ADMIN_DISCOUNT
                 else:
-                    total = total * 0.7
+                    total = total * STAFF_DISCOUNT
+
         if shipping == "express":
             total = total + 10
         elif shipping == "standard":
